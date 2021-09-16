@@ -2,7 +2,7 @@
  * config.h by Pascal Odijk 9/15/2021
  * P2 CS4760 Prof. Bhatia
  *
- * Header file for runsim, contains function prototypes for license obj.
+ * Header file for runsim and testsim -- contains function prototypes for license obj.
  */
 
 #ifndef CONFIG_H
@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
+#include <time.h>
 #include <sys/shm.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
@@ -22,14 +23,15 @@ struct nLicenses {
 	int runningProcesses;	
 };
 
+time_t addTime();
 void signalHandler();
 void killProcesses();
 
-int getlicense();
-int returnlicense();
-int initlicense();
-void addtolicenses(int n);
-void removelicenses(int n);
-void logmsg(const char* msg);
+extern int getlicense();
+extern int returnlicense();
+extern int initlicense();
+extern void addtolicenses(int n);
+extern void removelicenses(int n);
+extern void logmsg(char* msg);
 
 #endif

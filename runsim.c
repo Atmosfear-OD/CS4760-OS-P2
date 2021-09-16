@@ -28,27 +28,27 @@ int main(int argc, char *argv[]) {
 
 	if(argc > 2) {	// Check for too many args
 		printf("runsim: Error: Too many arguments\n");
-		printf("Usage: ./runsim n < testing.data -- where n is an integer between 1 & 20\n");
+		printf("Usage: ./runsim n < testing.data -- where n is an integer greater than or equal to 1\n");
 
 		return 0;
 	} else if(argc == 1) {	// Check for no arg
 		printf("runsim: Error: No argument given\n");
-		printf("Usage: ./runsim n < testing.data -- where n is an integer between 1 & 20\n");
+		printf("Usage: ./runsim n < testing.data -- where n is an integer greater than or equal to 1\n");
 
 		return 0;
 	}	
 	
 	if(strspn(argv[1], "0123456789") == strlen(argv[1])) {  // Check is n is a number
 		n = atoi(argv[1]);
-		if(n > 20 || n <= 0) {
-			printf("runsim: Error: Integer must be between 1 and 20\n");
-			printf("Usage: ./runsim n < testing.data -- where n is an integer 1 & 20\n");
+		if(n <= 0) {
+			printf("runsim: Error: Integer must be greater than or equal to 1\n");
+			printf("Usage: ./runsim n < testing.data -- where n is an integer greater than or equal to 1\n");
 
 			return 0;
 		}
 	} else {
 		printf("runsim: Error: Invalid argument: %s\n", argv[1]);
-		printf("Usage: ./runsim n < testing.data -- where n is an integer between 1 & 20\n");
+		printf("Usage: ./runsim n < testing.data -- where n is an integer greater than or equal to 1\n");
 
 		return 0;
 	}
@@ -100,15 +100,12 @@ int main(int argc, char *argv[]) {
 		j++;
 	}
 
-	//sleep = atoi(a2);
-	//repeat = atoi(a3);
-
 	// might delete --
 	printf("about to call fork\n");		
 	int pid = fork();
 	if(pid == 0) {
 		//execl(PATH, argv[0], argv[1]);
-		printf("about to call execl\n");
+		initlicense();
 		shm->runningProcesses++;
 		execl(progName, a2, a3, (char *)NULL);
 	}

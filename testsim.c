@@ -16,8 +16,8 @@ int main(int argc, char* argv[]) {
 	signal(SIGINT, signalHandler);
 	
 	int i = 0;
-	int sleep = atoi(argv[0]);
-	int repeat = atoi(argv[1]);
+	int sleepT = atoi(argv[0]);
+	int repeatF = atoi(argv[1]);
 	key_t key = 5678;
 	
 	// Get shared memory id from parent
@@ -32,10 +32,20 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	while(i < repeat) {
-		// TODO print to output file using logmsg
+	while(i < repeatF) {
+		pid_t id = getpid();
+		char *msg;
+		char *pid;
+		sprintf(pid, "%d", id);
 
-		// TODO Sleep
+		sprintf(msg, pid, " ", i, " of ", repeatF); // Formatted message
+		
+		// Print to output file using logmsg
+		logmsg(msg);
+
+		// Sleep before looping again
+		sleep(sleepT);
+		
 		i++;
 	}
 
