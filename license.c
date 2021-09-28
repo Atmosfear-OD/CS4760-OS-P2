@@ -2,83 +2,70 @@
  * license.c by Pascal Odijk 9/15/2021
  * P2 CS4760 Prof. Bhatia
  *
- * This file is the license obj. It handles all the functions stated in runsim.h.
+ * This file is the license obj. It handles all the functions stated in config.h. All messages are appended to file logfile.data.
  */
 
 #include "config.h"
 
-int availableLic;	// Num of licenses available at the time
-int block;		// Flag for if all licenses are gone and getlicense() needs to block
-FILE *ofptr;		// Output file pointer
-int shmid;
-struct nLicenses *shm;
-key_t key = 5678;
-
 // Initialize object
 int initlicense() {
-	// Get shared memory id from parent
-	if((shmid = shmget(key, sizeof(struct nLicenses) * 2, 0666)) < 0) {
-		perror("testsim: Error: shmget ");
-		exit(1);
-	}
+	shm->block = 0;
 
-	// Attach shared memory to child
-	if((shm = (struct nLicenses *)shmat(shmid, NULL, 0)) == (struct nLicenses *) -1) {
-		perror("testsim: Error: shmat ");
-		exit(1);
-	}
+	printf("number of licenses available: %d\n", shm->availLicenses);
 
-	availableLic = shm->num
-	printf("number of licenses available: %d\n", availableLic);
-	block = 0;
-
-	return availableLic;
+	return shm->childProc;
 }
 
 int getlicense() {
-	if(availableLic <= 0) {
-		block = 1;  // Block until one becomes available
+	if((shm->processes >= shm->availLicenses) || shm->availLicenses == 1) {
+		shm->block = 1;  // Block until one becomes available
+	} else {
+		shm->block = 0;
 	}
 
-	return block;
+	return shm->block;
 }
 
 // Increment licenses available
 int returnlicense() {
-	addtolicenses(1);
-	return availableLic;
+	shm->childProc--;
+	return shm->childProc;
 }
 
 // Add n licenses to the number available
 void addtolicenses(int n) {
-	availableLic += n;
+	shm->childProc - n;
+	shm->processes--;
 }
 
 // Decrements the number of licenses by n
 void removelicenses(int n) {
-	availableLic -= n;
+	
+	shm->childProc + n;
 }
 
 // Log the messages to output file
-void logmsg(char *msg) {
+void logmsg(char *pid, char *c, char *repeat) {
+	FILE *ofptr;
+
 	// Open outfile
-	if((ofptr = fopen("logfile.data", "w")) == NULL) {
+	if((ofptr = fopen("logfile.data", "a")) == NULL) {
 		perror("runsim: Error: ");
 		exit(1);
 	}
 	
 	// Append time
-	addTime();
+	addTime(ofptr);
 	
 	// Print msg to file
-	fprintf(ofptr, "%s\n", msg);
+	fprintf(ofptr, "%s %s of %s\n", pid, c, repeat);
 
 	// Close outfile
 	fclose(ofptr);
 }
 
 // Add current time
-void addTime() {
+void addTime(FILE *ofptr) {
 	time_t tm;
 	time(&tm);
 	struct tm *tp = localtime(&tm);

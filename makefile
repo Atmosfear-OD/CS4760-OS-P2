@@ -1,16 +1,19 @@
-CC	= gcc
-CFLAGS	= -g
-TARGET	= runsim
-OBJS	= driver.o testsim.o
+all: runsim testsim
 
-$ (TARGET): $(OBJS)
-	$(CC) -o $(TARGET) $(OBJS)
+testsim: testsim.o license.o
+	gcc -g -o testsim testsim.o license.o
+
+runsim: runsim.o license.o
+	gcc -g -o runsim runsim.o license.o
 
 runsim.o: runsim.c
-	$(CC) $(CFLAGS) -c runsim.c
+	gcc -g -c runsim.c
 
 testsim.o: testsim.c
-	$(CC) $(CFLAGS) -c testsim.c
+	gcc -g -c testsim.c
+
+license.o: license.c
+	gcc -g -c license.c
 
 clean:
-	rm -rf *.o
+	rm -rf *.o runsim testsim
